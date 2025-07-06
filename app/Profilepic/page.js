@@ -14,11 +14,9 @@ function ProfileContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (searchParams) {
-      const _id = searchParams.get("_id");
-      setId(_id);
-      console.log("Loaded _id from URL:", _id);
-    }
+    const _id = searchParams.get("_id");
+    setId(_id);
+    console.log("Loaded _id:", _id);
   }, [searchParams]);
 
   const handleFileChange = (e) => {
@@ -32,14 +30,10 @@ function ProfileContent() {
 
   const saveProfile = async () => {
     if (!id) {
-      toast.error("Missing profile ID. Please go back and try again.");
-      console.error("No _id found. Cannot save profile.");
+      toast.error("Missing ID. Cannot save.");
       return;
     }
-
     try {
-      console.log("Saving profile with data:", { id, bio, displayName, pic });
-
       const r = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,20 +45,19 @@ function ProfileContent() {
           pic
         })
       });
-
       const result = await r.json();
-      console.log("API response:", result);
-
-      if (result.success) {
-        toast.success("Profile completed!");
-        // If your API doesn't return `handle`, fallback to homepage or adjust accordingly
-        router.push(`/${result.handle || ""}`);
+      console.log("Saved:", result);
+      if (result.success && result.handle) {
+        toast.success("Profile completed!", {
+          onClose: () => router.push(`/${result.handle}`),
+          autoClose: 1000
+        });
       } else {
-        toast.error("Failed to save profile");
+        toast.error("Failed to save profile or missing handle.");
       }
     } catch (err) {
-      console.error("Error saving profile:", err);
-      toast.error("Something went wrong");
+      console.error(err);
+      toast.error("Something went wrong.");
     }
   };
 
