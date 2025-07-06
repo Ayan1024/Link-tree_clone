@@ -1,39 +1,82 @@
-import React from 'react'
-import Link from 'next/link'
+"use client";
 
-function Profilepic() {
+import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+export default function Profilepic() {
+  const [bio, setBio] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [pic, setPic] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("_id"); // from ?_id=xxx
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPic(reader.result); // base64 string
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const saveProfile = async () => {
+    try {
+      const r = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          _id: id,
+          action: "complete",
+          bio,
+          displayName,
+          pic
+        })
+      });
+      const result = await r.json();
+      if (result.success) {
+           toast.success("Profile completed!");
+      router.push(`/${result.handle}`); 
+      } else {
+        toast.error("Failed to save profile");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong");
+    }
+  };
+
   return (
-      <div className="flex flex-col justify-center items-center gap-10 mt-20">
-      <div className="flex flex-col justify-center items-center gap-2 ">
-        <h1 className="font-bold text-3xl flex justify-center">
-          Add profile details
-        </h1>
-        <p>
-        Add your profile image, name, and bio
-        </p>
-      </div>
-      <div className="flex justify-center items-center flex-col gap-5">
-        <h6 className="font-bold text-xl h-3xl  rounded-full bg-red-300 ">pic</h6>
-        <div className="links flex flex-col gap-3.5">
-          <input
-            className="border-gray-500 border-1 rounded w-2xl h-10 px-4 outline:black"
-            type="text"
-            placeholder="Display Name"
-          />
-          <input
-            className="border-gray-500 border-1 rounded w-2xl h-20 px-4 outline:black"
-            type="text"
-            placeholder="Bio"
-          />
-    
-        </div>
-        <Link     className="bg-purple-600 w-full h-10 font-bold text-white rounded-full cursor-pointer hover:bg-purple-500 text-center flex justify-center items-center" 
-        href={"/"}>
-    Continue
-        </Link>
-      </div>
+    <div className="flex flex-col justify-center items-center mt-20 gap-4">
+      <ToastContainer />
+      <h1 className="text-3xl font-bold">Complete your profile</h1>
+      <input 
+        type="text"
+        value={displayName}
+        onChange={(e) => setDisplayName(e.target.value)}
+        placeholder="Display Name"
+        className="border border-gray-400 rounded px-4 py-2 w-80"
+      />
+      <textarea 
+        value={bio}
+        onChange={(e) => setBio(e.target.value)}
+        placeholder="Your bio"
+        className="border border-gray-400 rounded px-4 py-2 w-80 h-24"
+      ></textarea>
+      <input 
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+      />
+      {pic && <img src={pic} alt="Preview" className="w-40 h-40 rounded-full object-cover" />}
+      <button 
+        onClick={saveProfile}
+        className="bg-purple-600 text-white font-bold rounded-full px-6 py-2 hover:bg-purple-500"
+      >
+        Save
+      </button>
     </div>
-  )
+  );
 }
-
-export default Profilepic
