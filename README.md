@@ -19,7 +19,17 @@ In future, I plan to add:
 ✅ Deployed on Vercel
 
 ---
+## 🔮 Upcoming Updates
+This is just a learning project for now.
+In the future I’ll add:
 
+✏️ Editing profile & links after creating
+
+🎨 Landing page animations & transitions
+
+🔐 Authentication for user dashboards
+
+🖌️ Themes & color customization
 ## 🔥 Screenshots
 
 | Home page           |   Your personal Linktree page                  |
