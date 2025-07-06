@@ -3,7 +3,6 @@ import { ObjectId } from "mongodb";
 
 export async function POST(request) {
   const body = await request.json();
-
   const client = await clientPromise;
   const db = client.db("linktree");
   const collection = db.collection("links");
@@ -27,30 +26,24 @@ export async function POST(request) {
       success: true,
       error: false,
       message: "Handle & links saved. Continue to profile.",
-      insertedId: result.insertedId, 
+      insertedId: result.insertedId,
     });
   }
 
   if (body.action === "complete") {
-    console.log("Updating profile for _id:", body._id);
-    console.log("Data to set:", {
-      bio: body.bio,
-      displayName: body.displayName,
-      pic: body.pic
-    });
-
     const updateResult = await collection.updateOne(
       { _id: new ObjectId(body._id) },
       { $set: { bio: body.bio, displayName: body.displayName, pic: body.pic } }
     );
 
+    // Now fetch the handle for this _id so we can return it
     const updatedDoc = await collection.findOne({ _id: new ObjectId(body._id) });
 
     return Response.json({
       success: true,
       error: false,
       message: "Profile completed",
-      handle: updatedDoc.handle,  // so your frontend can safely redirect
+      handle: updatedDoc?.handle || "",
     });
   }
 
