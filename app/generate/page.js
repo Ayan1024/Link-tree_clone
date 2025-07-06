@@ -1,75 +1,66 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function Generate() {
-
-  const searchparams = useSearchParams()
-
-  // const [link, setLink] = useState("");
-  // const [linktext, setLinktext] = useState("");
-  const [links, setLinks] = useState([{ link: "", linktext: "" }]);
-
-  const [handle, setHandle] = useState(searchparams.get("handle"));
-
-  const setLink = (index, link, linktext ) => {
-    setLinks((initialLinks)=>{
-     return initialLinks.map((item , i) =>{
-        if (i == index){
-          return {link , linktext}
-        }
-        else{
-          return item
-        }
-      })
-    })
-  }
-
-  const addmoreLink = (params) => {
-    setLinks(links.concat([{link: "" , linktext: ""}]))
-  }
-  
-  
-
+function GenerateContent() {
+  const searchparams = useSearchParams();
   const router = useRouter();
 
- const addLink = async () => {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+  const [links, setLinks] = useState([{ link: "", linktext: "" }]);
+  const [handle, setHandle] = useState(searchparams.get("handle"));
 
-  const body = JSON.stringify({
-    links,
-    handle,
-    action: "add",
-  });
-
-  try {
-    const r = await fetch("/api/generate", {
-      method: "POST",
-      headers: myHeaders,
-      body,
-    });
-    const result = await r.json();
-    console.log(result);
-
-    if (result.success) {
-      toast.success(result.message, {
-        onClose: () => router.push(`/Profilepic?_id=${result.insertedId}`),
-        autoClose: 1000,
+  const setLink = (index, link, linktext) => {
+    setLinks((initialLinks) => {
+      return initialLinks.map((item, i) => {
+        if (i == index) {
+          return { link, linktext };
+        } else {
+          return item;
+        }
       });
-    } else {
-      toast.error(result.message);
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    toast.error("Something went wrong!");
-  }
-};
+    });
+  };
 
+  const addmoreLink = () => {
+    setLinks(links.concat([{ link: "", linktext: "" }]));
+  };
+
+  const addLink = async () => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const body = JSON.stringify({
+      links,
+      handle,
+      action: "add",
+    });
+
+    try {
+      const r = await fetch("/api/generate", {
+        method: "POST",
+        headers: myHeaders,
+        body,
+      });
+      const result = await r.json();
+      console.log(result);
+
+      if (result.success) {
+        toast.success(result.message, {
+          onClose: () => router.push(`/Profilepic?_id=${result.insertedId}`),
+          autoClose: 1000,
+        });
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Something went wrong!");
+    }
+  };
 
   return (
     <div className="flex flex-col justify-center items-center gap-10 mt-20">
@@ -99,25 +90,28 @@ function Generate() {
 
         {links &&
           links.map((item, index) => {
-            return(
-            <div key={index} className="links flex flex-row gap-3.5 w-full">
-              <input
-                value={item.link || ""}
-                onChange={(e) => setLink(index , e.target.value , item.linktext)}
-                className="border border-gray-500 rounded w-full h-10 px-4 outline-black"
-                type="text"
-                placeholder="url"
-              />
-              <input
-                value={item.linktext || ""}
-                onChange={(e) =>setLink( index , item.link ,e.target.value )}
-                className="border border-gray-500 rounded w-full h-10 px-4 outline-black"
-                type="text"
-                placeholder="add link text"
-              />
-            </div>);
+            return (
+              <div key={index} className="links flex flex-row gap-3.5 w-full">
+                <input
+                  value={item.link || ""}
+                  onChange={(e) =>
+                    setLink(index, e.target.value, item.linktext)
+                  }
+                  className="border border-gray-500 rounded w-full h-10 px-4 outline-black"
+                  type="text"
+                  placeholder="url"
+                />
+                <input
+                  value={item.linktext || ""}
+                  onChange={(e) => setLink(index, item.link, e.target.value)}
+                  className="border border-gray-500 rounded w-full h-10 px-4 outline-black"
+                  type="text"
+                  placeholder="add link text"
+                />
+              </div>
+            );
           })}
-       <button
+        <button
           onClick={() => addmoreLink()}
           className="bg-purple-600 px-2 h-10 font-bold text-white rounded-full cursor-pointer hover:bg-purple-500 flex justify-center items-center"
         >
@@ -134,4 +128,10 @@ function Generate() {
   );
 }
 
-export default Generate;
+export default function Generate() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GenerateContent />
+    </Suspense>
+  );
+}
