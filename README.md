@@ -1,3 +1,55 @@
+# Linktree Clone 🌿
+
+A simple Linktree clone built with **Next.js 15 (App Router)**, **Tailwind CSS**, **MongoDB Atlas**, and deployed on **Vercel**.
+
+This was built by me (Ayan) as an exercise to improve my full stack skills.  
+In future, I plan to add:
+- 🎨 Landing page animations
+- ✏️ Edit profile & links feature
+- 🌈 More customization options (themes, colors)
+
+---
+
+## 🚀 Features
+
+✅ Claim a unique handle (like `linktr.ee/ayan`)  
+✅ Add multiple custom links with descriptions  
+✅ Upload profile picture & bio  
+✅ Data stored in MongoDB Atlas   
+✅ Deployed on Vercel
+
+---
+
+## 🔥 Screenshots
+
+| Home page           |   Your personal Linktree page                  |
+|-------------------------------------------|------------------------------------------|
+| ![Add Links](./screenshot/home.png) | ![Profile Pic](./screenshot/user.png) |
+
+|           ADD Links page   | Edit bio Display Name and upload pic page                    |
+|-------------------------------------------|------------------------------------------|
+| ![Linktree Page](./screenshot/links.png) | ![Mobile](./screenshot/pic.png) |
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** Next.js (App Router), Tailwind CSS
+- **Backend:** Next.js API Routes
+- **Database:** MongoDB Atlas
+- **Deployment:** Vercel
+
+---
+
+## 🚀 Local setup
+
+1. Clone the repo
+```bash
+git clone https://github.com/Ayan1024/Link-tree_clone.git
+cd Link-tree_clone
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
