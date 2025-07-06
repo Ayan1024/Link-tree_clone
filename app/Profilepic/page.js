@@ -9,20 +9,23 @@ export default function Profilepic() {
   const [bio, setBio] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [pic, setPic] = useState("");
-  const [id, setId] = useState(null);  // defer reading id
+  const [id, setId] = useState(null);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const _id = searchParams.get("_id");
-    setId(_id);
+    if (searchParams) {
+      const _id = searchParams.get("_id");
+      setId(_id);
+    }
   }, [searchParams]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.onloadend = () => {
-      setPic(reader.result); // base64 string
+      setPic(reader.result);
     };
     reader.readAsDataURL(file);
   };
@@ -43,7 +46,7 @@ export default function Profilepic() {
       const result = await r.json();
       if (result.success) {
         toast.success("Profile completed!");
-        router.push(`/${result.handle}`); 
+        router.push(`/${result.handle}`);
       } else {
         toast.error("Failed to save profile");
       }
