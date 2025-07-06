@@ -9,7 +9,6 @@ export async function POST(request) {
   const collection = db.collection("links");
 
   if (body.action === "add") {
-    // check if handle exists
     const doc = await collection.findOne({ handle: body.handle });
     if (doc) {
       return Response.json({
@@ -19,7 +18,6 @@ export async function POST(request) {
       });
     }
 
-    // insert initial handle & links
     const result = await collection.insertOne({
       handle: body.handle,
       links: body.links,
@@ -33,28 +31,28 @@ export async function POST(request) {
     });
   }
 
-if (body.action === "complete") {
-  console.log("Updating profile for _id:", body._id);
-  console.log("Data to set:", {
-    bio: body.bio,
-    displayName: body.displayName,
-    pic: body.pic
-  });
+  if (body.action === "complete") {
+    console.log("Updating profile for _id:", body._id);
+    console.log("Data to set:", {
+      bio: body.bio,
+      displayName: body.displayName,
+      pic: body.pic
+    });
 
-  const updateResult = await collection.updateOne(
-    { _id: new ObjectId(body._id) },
-    { $set: { bio: body.bio, displayName: body.displayName, pic: body.pic } }
-  );
+    const updateResult = await collection.updateOne(
+      { _id: new ObjectId(body._id) },
+      { $set: { bio: body.bio, displayName: body.displayName, pic: body.pic } }
+    );
 
-  console.log("Update result:", updateResult);
+    const updatedDoc = await collection.findOne({ _id: new ObjectId(body._id) });
 
-  return Response.json({
-    success: true,
-    error: false,
-    message: "Profile completed",
-    result: updateResult,
-  });
-}
+    return Response.json({
+      success: true,
+      error: false,
+      message: "Profile completed",
+      handle: updatedDoc.handle,  // so your frontend can safely redirect
+    });
+  }
 
   return Response.json({ success: false, message: "Invalid request" });
 }

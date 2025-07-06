@@ -2,7 +2,7 @@ import clientPromise from "@/lib/mongodb";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }) {
-  const handle = params.handle;
+  const {handle} = await params;
 
   const client = await clientPromise;
   const db = client.db("linktree");
