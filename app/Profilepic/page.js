@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,9 +9,14 @@ export default function Profilepic() {
   const [bio, setBio] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [pic, setPic] = useState("");
+  const [id, setId] = useState(null);  // defer reading id
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get("_id"); // from ?_id=xxx
+
+  useEffect(() => {
+    const _id = searchParams.get("_id");
+    setId(_id);
+  }, [searchParams]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -37,8 +42,8 @@ export default function Profilepic() {
       });
       const result = await r.json();
       if (result.success) {
-           toast.success("Profile completed!");
-      router.push(`/${result.handle}`); 
+        toast.success("Profile completed!");
+        router.push(`/${result.handle}`); 
       } else {
         toast.error("Failed to save profile");
       }
