@@ -50,7 +50,7 @@ function GenerateContent() {
 
       if (result.success) {
         toast.success(result.message, {
-          onClose: () => router.push(`/Profilepic?_id=${result.insertedId}`),
+          onClose: () => router.push(`/profilepic?_id=${result.insertedId}`),
           autoClose: 1000,
         });
       } else {

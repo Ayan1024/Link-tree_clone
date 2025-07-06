@@ -13,7 +13,7 @@ export default function Home() {
 const router = useRouter();
 
 const createTree = () => {
-  router.push(`/Generate?handle=${text}`);
+  router.push(`/generate?handle=${text}`);
 };
 
 
