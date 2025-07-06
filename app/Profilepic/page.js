@@ -17,6 +17,7 @@ function ProfileContent() {
     if (searchParams) {
       const _id = searchParams.get("_id");
       setId(_id);
+      console.log("Loaded _id from URL:", _id);
     }
   }, [searchParams]);
 
@@ -30,7 +31,15 @@ function ProfileContent() {
   };
 
   const saveProfile = async () => {
+    if (!id) {
+      toast.error("Missing profile ID. Please go back and try again.");
+      console.error("No _id found. Cannot save profile.");
+      return;
+    }
+
     try {
+      console.log("Saving profile with data:", { id, bio, displayName, pic });
+
       const r = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,15 +51,19 @@ function ProfileContent() {
           pic
         })
       });
+
       const result = await r.json();
+      console.log("API response:", result);
+
       if (result.success) {
         toast.success("Profile completed!");
-        router.push(`/${result.handle}`);
+        // If your API doesn't return `handle`, fallback to homepage or adjust accordingly
+        router.push(`/${result.handle || ""}`);
       } else {
         toast.error("Failed to save profile");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error saving profile:", err);
       toast.error("Something went wrong");
     }
   };
