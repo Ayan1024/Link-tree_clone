@@ -1,12 +1,10 @@
 "use client";
-export const dynamic = "force-dynamic";
-
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function Profilepic() {
+function ProfileContent() {
   const [bio, setBio] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [pic, setPic] = useState("");
@@ -87,5 +85,13 @@ export default function Profilepic() {
         Save
       </button>
     </div>
+  );
+}
+
+export default function Profilepic() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProfileContent />
+    </Suspense>
   );
 }
