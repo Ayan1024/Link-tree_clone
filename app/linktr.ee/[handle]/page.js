@@ -2,7 +2,7 @@ import clientPromise from "@/lib/mongodb";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }) {
-  const { handle } = params;  // ✅ correct (was wrong before)
+  const { handle } = params;
 
   const client = await clientPromise;
   const db = client.db("linktree");
@@ -31,7 +31,7 @@ export default async function Page({ params }) {
 
       <div className="text-center mt-6 w-full max-w-md">
         {item.links.map((link, index) => {
-          const href = link.link.startsWith("http")
+          const href = /^[a-z]+:/.test(link.link)
             ? link.link
             : `https://${link.link}`;
 
